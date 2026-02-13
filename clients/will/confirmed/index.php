@@ -23,7 +23,7 @@ $retryHref = '/clients/will/' . ($tokenFromQuery !== '' ? '?t=' . urlencode($tok
 <section class="header16" style="position: relative; overflow: hidden; min-height: 100vh; background: #000; display: flex; align-items: center; justify-content: center; padding: 2rem;">
   <div style="text-align: center; color: white; width: 100%; max-width: 500px;">
     <h1 style="font-size: 2.5rem; margin-bottom: 1rem;"><strong>Got it. Your stream key was received. You can close this page.</strong></h1>
-    <a href="<?php echo htmlspecialchars($retryHref, ENT_QUOTES, 'UTF-8'); ?>" style="color: #b8d4ff; text-decoration: underline;">Submit another key</a>
+    <a href="<?php echo htmlspecialchars($retryHref, ENT_QUOTES, 'UTF-8'); ?>" style="color: #b8d4ff; text-decoration: underline;">Submit a different key</a>
   </div>
 </section>
 </body>
