@@ -18,8 +18,9 @@ if (!is_array($payload)) {
 
 $providedToken = isset($payload['t']) && is_string($payload['t']) ? $payload['t'] : '';
 $expectedToken = getenv('WILL_TOKEN');
+$tokenRequired = is_string($expectedToken) && $expectedToken !== '';
 
-if (!is_string($expectedToken) || $expectedToken === '' || !hash_equals($expectedToken, $providedToken)) {
+if ($tokenRequired && !hash_equals($expectedToken, $providedToken)) {
     http_response_code(403);
     echo json_encode(['success' => false]);
     exit;
@@ -34,9 +35,13 @@ if ($keyLength < 10 || $keyLength > 512) {
     exit;
 }
 
-$secretsDir = __DIR__ . '/../../.secrets';
-$streamKeyPath = $secretsDir . '/will_stream_key.txt';
-$cooldownPath = $secretsDir . '/will_stream_key.cooldown';
+$preferredSecretsDir = '/var/lib/irlmonster-secrets';
+$fallbackSecretsDir = __DIR__ . '/../../.secrets';
+$secretsDir = $preferredSecretsDir;
+
+if (!is_dir($secretsDir) && !@mkdir($secretsDir, 0700, true)) {
+    $secretsDir = $fallbackSecretsDir;
+}
 
 if (!is_dir($secretsDir) && !mkdir($secretsDir, 0700, true)) {
     http_response_code(500);
@@ -45,6 +50,9 @@ if (!is_dir($secretsDir) && !mkdir($secretsDir, 0700, true)) {
 }
 
 @chmod($secretsDir, 0700);
+
+$streamKeyPath = $secretsDir . '/will_stream_key.txt';
+$cooldownPath = $secretsDir . '/will_stream_key.cooldown';
 
 $now = time();
 $lastSubmission = 0;

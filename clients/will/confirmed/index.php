@@ -20,11 +20,21 @@ $retryHref = '/clients/will/' . ($tokenFromQuery !== '' ? '?t=' . urlencode($tok
   <link rel="preload" as="style" href="/assets/mobirise/css/mbr-additional.css?v=XDXjuH"><link rel="stylesheet" href="/assets/mobirise/css/mbr-additional.css?v=XDXjuH" type="text/css">
 </head>
 <body>
-<section class="header16" style="position: relative; overflow: hidden; min-height: 100vh; background: #000; display: flex; align-items: center; justify-content: center; padding: 2rem;">
-  <div style="text-align: center; color: white; width: 100%; max-width: 500px;">
-    <h1 style="font-size: 2.5rem; margin-bottom: 1rem;"><strong>Got it. Your stream key was received. You can close this page.</strong></h1>
-    <a href="<?php echo htmlspecialchars($retryHref, ENT_QUOTES, 'UTF-8'); ?>" style="color: #b8d4ff; text-decoration: underline;">Submit another key</a>
+<section class="header16" style="position: relative; overflow: hidden; min-height: 100vh; background: #000;">
+  <div class="starfield-container" style="position:fixed; top:0; left:0; width:100%; height:100%; z-index:0;">
+    <div class="starfield-origin" style="position:absolute; top:80%; left:50%; width:1px; height:1px;"></div>
+  </div>
+
+  <div style="position: relative; z-index: 1; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem;">
+    <div style="text-align: center; color: white; width: 100%; max-width: 500px;">
+      <h1 style="font-size: 2.5rem; margin-bottom: 1rem;"><strong>Got it. Your stream key was received. You can close this page.</strong></h1>
+      <a href="<?php echo htmlspecialchars($retryHref, ENT_QUOTES, 'UTF-8'); ?>" style="color: #b8d4ff; text-decoration: underline;">Submit a different key</a>
+    </div>
   </div>
 </section>
+
+<script src="/assets/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/theme/js/script.js"></script>
+<script src="/starfield.js"></script>
 </body>
 </html>

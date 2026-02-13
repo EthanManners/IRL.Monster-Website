@@ -1,7 +1,8 @@
 <?php
 $tokenFromQuery = isset($_GET['t']) ? $_GET['t'] : '';
 $expectedToken = getenv('WILL_TOKEN');
-$isAuthorized = is_string($expectedToken) && $expectedToken !== '' && hash_equals($expectedToken, $tokenFromQuery);
+$tokenRequired = is_string($expectedToken) && $expectedToken !== '';
+$isAuthorized = !$tokenRequired || hash_equals($expectedToken, $tokenFromQuery);
 ?>
 <!DOCTYPE html>
 <html>
@@ -37,32 +38,13 @@ $isAuthorized = is_string($expectedToken) && $expectedToken !== '' && hash_equal
       <?php else: ?>
         <h1 style="font-size: 2.5rem; margin-bottom: 1rem;"><strong>Welcome back, Will</strong></h1>
 
-        <img id="avatarPreview" src="/assets/images/channels4-profile-816x816.jpg" alt="Will profile picture" style="width: 110px; height: 110px; border-radius: 999px; object-fit: cover; border: 2px solid rgba(255,255,255,0.6); margin-bottom: 0.75rem;">
+        <img src="/assets/images/channels4-profile-816x816.jpg" alt="Will profile picture" style="width: 110px; height: 110px; border-radius: 999px; object-fit: cover; border: 2px solid rgba(255,255,255,0.6); margin-bottom: 1rem;">
 
-        <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem; width: 100%; margin: 0 auto;">
-          <input
-            id="avatarUrl"
-            type="url"
-            placeholder="Profile image URL (optional)"
-            style="padding: 0.75rem; width: 100%; border-radius: 25px; border: none; text-align: center;"
-          >
-          <input
-            id="streamKey"
-            type="password"
-            placeholder="Stream Key"
-            minlength="10"
-            maxlength="512"
-            required
-            style="padding: 0.75rem; width: 100%; border-radius: 25px; border: none; text-align: center;"
-          >
-          <button
-            id="submitBtn"
-            style="padding: 0.75rem 2rem; border: 2px solid white; background: transparent; color: white; border-radius: 50px; font-weight: bold; cursor: pointer;"
-          >
-            Submit
-          </button>
+        <form id="willStreamForm" method="post" style="display: flex; flex-direction: column; align-items: center; gap: 1rem; width: 100%; margin: 0 auto;">
+          <input id="streamKey" type="password" placeholder="Stream Key" minlength="10" maxlength="512" required style="padding: 0.75rem; width: 100%; border-radius: 25px; border: none; text-align: center;">
+          <button id="submitBtn" type="submit" style="padding: 0.75rem 2rem; border: 2px solid white; background: transparent; color: white; border-radius: 50px; font-weight: bold; cursor: pointer;">Submit</button>
           <p id="statusMessage" style="min-height: 1.5em; margin: 0; color: #ddd;"></p>
-        </div>
+        </form>
       <?php endif; ?>
     </div>
   </div>
@@ -79,19 +61,14 @@ $isAuthorized = is_string($expectedToken) && $expectedToken !== '' && hash_equal
 <?php if ($isAuthorized): ?>
 <script>
 (function () {
-  const avatarUrl = document.getElementById('avatarUrl');
-  const avatarPreview = document.getElementById('avatarPreview');
+  const willStreamForm = document.getElementById('willStreamForm');
   const streamKey = document.getElementById('streamKey');
   const submitBtn = document.getElementById('submitBtn');
   const statusMessage = document.getElementById('statusMessage');
   const token = new URLSearchParams(window.location.search).get('t') || '';
 
-  avatarUrl.addEventListener('input', function () {
-    const value = avatarUrl.value.trim();
-    avatarPreview.src = value || '/assets/images/channels4-profile-816x816.jpg';
-  });
-
-  submitBtn.addEventListener('click', async function () {
+  willStreamForm.addEventListener('submit', async function (event) {
+    event.preventDefault();
     const value = streamKey.value;
 
     if (value.length < 10 || value.length > 512) {
@@ -122,7 +99,7 @@ $isAuthorized = is_string($expectedToken) && $expectedToken !== '' && hash_equal
       if (response.status === 429) {
         statusMessage.textContent = 'Please wait a few seconds and try again.';
       } else if (response.status === 400 || response.status === 403) {
-        statusMessage.textContent = 'Unable to submit. Please check your link and key.';
+        statusMessage.textContent = 'Unable to submit. Please check your link.';
       } else {
         statusMessage.textContent = 'Something went wrong. Please try again later.';
       }
